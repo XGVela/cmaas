@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration packages="org.xgvela.logging">
+	<Appenders>
+		<NatsAppender name="NatsAppender">
+			<PatternLayout
+				pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5level][%corrId]:[%-10t] %logger{2}- %msg" />
+		</NatsAppender>
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5level][%corrId]:[%-10t] %logger{2}- %msg%n" />
+		</Console>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="org.xgvela" level="debug" additivity="false">
+			<AppenderRef ref="NatsAppender" />
+			<AppenderRef ref="STDOUT" />
+		</Logger>
+		<Logger name="com.tailf.dp.Dp" level="debug" additivity="false">
+			<AppenderRef ref="NatsAppender" />
+			<AppenderRef ref="STDOUT" />
+		</Logger>
+		<Root level="error">
+			<AppenderRef ref="NatsAppender" />
+			<AppenderRef ref="STDOUT" />
+		</Root>
+	</Loggers>
+</Configuration>

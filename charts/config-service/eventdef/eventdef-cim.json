@@ -1,0 +1,93 @@
+{
+	"events": {
+		"CimConnectEtcdFailure": {
+			"eventType": "COMMUNICATION",
+			"perceivedSeverity": "CRITICAL",
+			"probableCause": "etcd communication failure",
+			"specificProblem": "CIM unable to establish connection to etcd",
+			"rootCauseIndicator": "",
+			"trendIndication": "",
+			"correlatedNotifications": "",
+			"additionalText": "",
+			"proposedRepairAction": ""
+		},
+		"RoleAssignmentStatus": {
+            "eventType": "HA_ROLE_ASSIGNMENT",
+            "perceivedSeverity": "INFO",
+            "probableCause": "Role assignment status received for HA operation.",
+            "specificProblem": "",
+            "rootCauseIndicator": "",
+            "trendIndication": "",
+            "correlatedNotifications": "",
+            "additionalText": "",
+            "proposedRepairAction": ""
+        },
+        "HAMonitoringFailure": {
+            "eventType": "HA_MONITORING",
+            "perceivedSeverity": "MAJOR",
+            "probableCause": "HA Failed To Monitor Application uS",
+            "specificProblem": "",
+            "rootCauseIndicator": "",
+            "trendIndication": "",
+            "correlatedNotifications": "",
+            "additionalText": "",
+            "proposedRepairAction": ""
+        },
+        "LmaasTCPFailure": {
+            "eventType": "COMMUNICATION",
+            "perceivedSeverity": "MAJOR",
+            "probableCause": "TCP connection failure towards fluent-bit onbserved in LMaaS",
+            "specificProblem": "",
+            "rootCauseIndicator": "",
+            "trendIndication": "",
+            "correlatedNotifications": "",
+            "additionalText": "",
+            "proposedRepairAction": "Verify fluent-bit is running."
+        },
+        "CimCommitConfigSuccess": {
+            "eventType": "COMMIT_CONFIG",
+            "perceivedSeverity": "INFO",
+            "probableCause": "A commit-config operation towards etcd is successful",
+            "specificProblem": "",
+            "rootCauseIndicator": "",
+            "trendIndication": "",
+            "correlatedNotifications": "",
+            "additionalText": "",
+            "proposedRepairAction": ""
+        },
+        "CimCommitConfigFailure": {
+            "eventType": "COMMIT_CONFIG",
+            "perceivedSeverity": "MAJOR",
+            "probableCause": "A commit-config operation failed towards etcd",
+            "specificProblem": "",
+            "rootCauseIndicator": "",
+            "trendIndication": "",
+            "correlatedNotifications": "",
+            "additionalText": "",
+            "proposedRepairAction": ""
+        },
+        "CimConfigUpdateSuccess": {
+            "eventType": "CONFIG_UPDATE",
+            "perceivedSeverity": "INFO",
+            "probableCause": "Successfully updated CIM configuration",
+            "specificProblem": "",
+            "rootCauseIndicator": "",
+            "trendIndication": "",
+            "correlatedNotifications": "",
+            "additionalText": "",
+            "proposedRepairAction": ""
+        },
+        "CimConfigUpdateFailure": {
+            "eventType": "CONFIG_UPDATE",
+            "perceivedSeverity": "MAJOR",
+            "probableCause": "Failure updating CIM configuration",
+            "specificProblem": "",
+            "rootCauseIndicator": "",
+            "trendIndication": "",
+            "correlatedNotifications": "",
+            "additionalText": "",
+            "proposedRepairAction": ""
+        }
+    }
+}
+

@@ -1,0 +1,179 @@
+module xcf-nrm-operations {
+  yang-version 1.1;
+  namespace urn:rdns:org:xgvela:xcf-nrm-operations;
+  prefix opXgvela;
+
+  import ietf-yang-types  { prefix yang; }
+  import tailf-common { prefix tailf; }
+
+  description "This yang defines a standard, language-agnostic interface to APIs.";
+  reference "https://openapis.org";
+
+  revision 2020-09-21 {
+      description "Initial revision";
+  }
+
+  /*
+   * Action Groupings
+   */
+  grouping operation-request {
+    leaf operationId {
+      description "One of the operations registered under specifications list of the target MangedObject.";
+      type string;
+      mandatory true;
+    }
+    list parameters {
+      key "name";
+      leaf name {
+        type string;
+        mandatory true;
+      }
+      leaf value {
+        type string;
+      }
+    }
+    leaf body {
+      type string {
+        length 0..50000;
+      }
+    }
+  }
+
+  grouping operation-response {
+    container headers {
+      list header {
+        leaf name {
+          type string;
+          mandatory true;
+        }
+        leaf value {
+          type string;
+        }
+      }
+    }
+    leaf body {
+      type string {
+        length 0..50000;
+      }
+    }
+  }
+
+  grouping exec-response {
+    leaf transactionId {
+      description "Transaction ID value of the corresponding request. For exec operations, transaction ID can be used to get the status of the operation.";
+      type yang:uuid;
+      mandatory true;
+    }
+    uses operation-response;
+  }
+
+  /*
+   * Operation Record Groupings
+   */
+  grouping operations-record-grp {
+    leaf transactionId {
+      type yang:uuid;
+      mandatory true;
+    }
+    leaf parentTransactionId {
+      type yang:uuid;
+    }
+    leaf operationId {
+      type string;
+      mandatory true;
+    }
+    leaf target {
+      description "MO.id of the target ManagedObject";
+      type string;
+      mandatory true;
+    }
+    leaf request {
+      type string;
+    }
+    leaf response {
+      type string;
+    }
+    leaf createTime {
+      type yang:date-and-time;
+    }
+    leaf updateTime {
+      type yang:date-and-time;
+    }
+    leaf schedule {
+      description "Schedule in cron format.";
+      type string {
+        pattern "^(@(monthly|weekly|daily|hourly|reboot))|(@every ([0-9]+(m|h))+)|(((([0-9]+,)+[0-9]+|([0-9]+(/|\\-)[0-9]+)|[0-9]+|\\*) ?){5,7})$";
+      }
+    }
+    leaf state {
+      description "Current state of the operation.";
+      type enumeration {
+        enum SCHEDULED;
+        enum PENDING;
+        enum RUNNING;
+        enum ABORTING;
+        enum COMPLETED;
+      }
+    }
+    leaf status {
+      description "Resulting/Final state of the operation.";
+      type enumeration {
+        enum null;
+        enum CANCELLED;
+        enum FAILED;
+        enum SUCCESS;
+      }
+    }
+  }
+  grouping OperationsGrp {
+    container operations {
+      container specification {
+        tailf:action register {
+          tailf:actionpoint nf-operations-specification-register;
+          input {
+            leaf specification {
+              type string;
+              description "OpenAPI 3.0 compliant object in JSON format.";
+            }
+          }
+
+          output {
+            uses operation-response;
+          }
+        }
+        leaf openapi {
+          type string;
+          description "OpenAPI 3.0 compliant object in JSON format. JSON is base64 encoded.";
+        }
+      }
+
+      /*
+      tailf:action show {
+        tailf:actionpoint nf-operations-show;
+        input {
+          uses operation-request {
+            refine operationId {
+              must "../../specification/paths/operations[operationId = current()]/method = 'get'";
+            }
+          }
+        }
+
+        output {
+          uses operation-response;
+        }
+      }
+      */
+
+      tailf:action exec {
+        tailf:actionpoint nf-operations-exec;
+        input {
+          uses operation-request;
+        }
+
+        output {
+          uses exec-response;
+        }
+      }
+    }
+  }
+}

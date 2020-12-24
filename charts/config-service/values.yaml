@@ -1,0 +1,107 @@
+######## CNF TEMPLATE DEFINITIONS ###########
+nf:
+  version: "cmaas_tag"
+  vendorId: "mvnr"
+  xgvelaId: "xgvela1" #do not edit
+  nfClass: "mgmt"
+  nfType: "xgvela"
+  nfId: "xgvela1"
+
+  cnftpl_configmap:
+    mgmt_cfg:
+      create: true
+      metaspec:
+         annotations:
+            configMgmt: enabled
+    static_cfg:
+      create: true
+      metaspec: {}
+    env_cfg:
+      create: false
+      metaspec: {}
+  cnftpl_secret:
+      create: false
+      metaspec: {}
+      secretspec: {}
+  cnftpl_namespaces:
+      create: false
+      metaspec: {}
+  cnftpl_dashboard:
+      create: false
+      metaspec: {}
+  cnftpl_eventdef:
+      create: true
+      metaspec: {}
+  cnftpl_alertsdef:
+      create: false
+      metaspec: {}
+  cnftpl_metricsdef:
+      create: false
+      metaspec: {}
+
+namespace: xgvela-xgvela1-mgmt-xgvela-xgvela1
+
+common:
+  app_name: config-service
+
+componentSpec:
+  deployment:
+    pod_metaspec:
+      labels:
+        app: config-service
+      annotations:
+        sidecar.istio.io/inject: "false"
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+
+  service:
+    metaspec:
+      labels:
+        app: config-service
+
+serviceAccount: config-serviceaccount
+replica_count: 1
+hub: 10.1.1.1:5000
+changeset_lease: 120
+config_service:
+  init_container:
+    image:
+      repository: xgvela-svc-init
+      tag: v0.3.4
+  container:
+    hostname: config-service
+    image:
+      repository: config-service
+      tag: cmaas_tag #replaced by build script
+    resource:
+      limit_memory: 1000Mi
+      limit_cpu: 1000m
+      request_memory: 400Mi
+      request_cpu: 300m
+
+    mount:
+      type: Directory
+      container_path: /netconf/apps
+      host_path: /data
+
+oam_sidecar:
+  container:
+    hostname: cim
+    image:
+      repository: cim
+      tag: v1.11
+    resource:
+      limit_memory: 200Mi
+      limit_cpu: 100m
+      request_memory: 100Mi
+      request_cpu: 100m
+    ports:
+      server: 4222
+    mount:
+      type: Directory
+      container_path: /opt/logs
+      host_path: /data/logs
+
+etcd_svc_fqdn: "etcd.xgvela-xgvela1-infra-xgvela-xgvela1.svc.cluster.local:2379"
+kafka_svc_fqdn: "kafka-svc.xgvela-xgvela1-infra-xgvela-xgvela1.svc.cluster.local:9092"
+k8s_svc_fqdn: "kubernetes.default.svc.cluster.local"

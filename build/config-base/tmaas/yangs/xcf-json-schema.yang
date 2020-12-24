@@ -1,0 +1,281 @@
+module xcf-json-schema {
+  namespace "urn:rdns:org:xgvela:xcf-json-schema";
+  prefix json;
+  yang-version 1.1;
+
+  import iana-crypt-hash { prefix ianach; }
+  import ietf-yang-types { prefix yang; }
+  import ietf-inet-types { prefix inet; }
+
+  organization
+    "xGVela";
+  reference
+    "https://json-schema.org";
+
+  revision 2020-09-21 {
+    description
+      "Initial version.";
+  }
+
+  /*
+   * Type Definitions
+   */
+  typedef meta-identifier-t {
+    type yang:yang-identifier;
+  }
+  typedef title-t {
+    type string {
+      length 1..255;
+    }
+  }
+  typedef description-t {
+    type string;
+  }
+  typedef person-name-t {
+    type string {
+      length 1..255;
+    }
+  }
+  typedef email-address-t {
+    type string {
+      pattern "[\\-_.a-zA-Z0-9]+@[\\-_.a-zA-Z0-9]+(\\.[\\-_.a-zA-Z0-9]+)*";
+    }
+    description
+      "Valid format of an email address.";
+  }
+  typedef phone-number-t {
+    type string {
+      pattern '\+?[0-9]+(-[0-9]+)*';
+    }
+    description
+      "Valid format of a phone number.";
+  }
+  typedef timezone-t {
+    type string;
+  }
+  typedef password-t {
+    type ianach:crypt-hash;
+  }
+  typedef empty-string-t {
+    type string {
+      length 0;
+    }
+  }
+  typedef wildcard-t {
+    type string {
+      pattern '\*';
+    }
+  }
+
+  typedef content-type-t {
+      type string {
+          pattern "[a-zA-Z0-9]+/[-+.a-zA-Z0-9]+";
+      }
+  }
+
+  typedef semantic-version-t {
+    type string {
+      pattern '\d+\.\d+\.\d+(-.+)?';
+    }
+  }
+  typedef api-version-t {
+    type string {
+      pattern '\d+\.\d+';
+    }
+  }
+  typedef license-t {
+    type yang:yang-identifier;
+  }
+  typedef file-name-t {
+    type string {
+      length 0..255;
+      //pattern '[\\\/\-\w\.]+'; // might be too restrictive...
+    }
+  }
+  typedef json-schema-ref-t {
+    type inet:uri;
+  }
+
+  /*
+   * Groupings
+   */
+  grouping json-datatype {
+    leaf type {
+      type enumeration {
+        enum string;
+        enum number;
+        enum integer;
+        enum boolean;
+        enum array;
+        enum file;
+        enum object;
+      }
+    }
+    leaf format {
+      type union {
+        type enumeration {
+          enum int32;
+          enum int64;
+          enum float;
+          enum double;
+          enum byte;
+          enum binary;
+          enum date;
+          enum date-time;
+          enum password;
+        }
+        type string;
+      }
+    }
+  }
+
+  grouping json-schema {
+    /*
+    leaf $ref {
+      type json:json-schema-ref-t;
+    }
+    */
+    leaf title {
+      type json:title-t;
+    }
+    leaf description {
+      type string;
+    }
+    uses json:json-datatype;
+    leaf-list required {
+      type string;
+    }
+    leaf minLength {
+      type uint32;
+    }
+    leaf maxLength {
+      type uint32;
+    }
+    leaf pattern {
+      type string;
+    }
+    leaf minimum {
+      type uint64;
+    }
+    leaf maximum {
+      type uint64;
+    }
+    leaf exclusiveMinimum {
+      type boolean;
+      default false;
+    }
+    leaf exclusiveMaximum {
+      type boolean;
+      default false;
+    }
+    leaf multipleOf {
+      type decimal64 {
+        fraction-digits 3;
+      }
+    }
+    leaf minItems {
+      type uint32;
+    }
+    leaf maxItems {
+      type uint32;
+    }
+    leaf minProperties {
+      type uint32;
+    }
+    leaf maxProperties {
+      type uint32;
+    }
+    leaf uniqueItems {
+      type boolean;
+      default false;
+    }
+    leaf-list enum {
+      type string;
+    }
+    leaf contentMediaType {
+      type content-type-t;
+    }
+    leaf contentEncoding {
+      type enumeration {
+        enum 7bit;
+        enum 8bit;
+        enum binary;
+        enum quoted-printable;
+        enum base64;
+      }
+    }
+
+    leaf nullable {
+      description "Allows sending a null value for the defined schema.";
+      type boolean;
+      default false;
+    }
+
+    leaf readOnly {
+      description "Relevant only for Schema properties definitions. Declares the property as read-only. This means that it MAY be sent as part of a response but SHOULD NOT be sent as part of the request. If the property is marked as readOnly being true and is in the required list, the required will take effort on the response only. A property MUST NOT be marked as both readOnly and writeOnly being true. Default value is false.";
+      type boolean;
+      default true;
+    }
+
+    leaf writeOnly {
+      description "Relevant only for Schema properties definitions. Declares the property as read-only. This means that it MAY be sent as part of a response but SHOULD NOT be sent as part of the request. If the property is marked as writeOnly being true and is in the required list, the required will take effort on the response only. A property MUST NOT be marked as both readOnly and writeOnly being true. Default value is false.";
+      type boolean;
+      default true;
+    }
+
+    leaf deprecated {
+      description "SPecifies that a schema is deprecated and SHOULD be transitioned out of usage. Default value is false";
+      type boolean;
+      default false;
+    }
+  }
+
+  grouping properties-list {
+    list properties {
+      key name;
+      leaf name {
+        type yang:yang-identifier;
+      }
+      container schema {
+        uses json:json-schema {
+          when "../name";
+        }
+      }
+    }
+  }
+
+  grouping schema-object {
+    uses json:json-schema;
+    uses json:properties-list;
+    container items {
+      when "../type = 'array'";
+      uses json:json-schema {
+        when "../type";
+      }
+    }
+
+    list allOf {
+      key name;
+      leaf name {
+        type yang:yang-identifier;
+      }
+      uses json:json-schema;
+    }
+
+    list anyOf {
+      key name;
+      leaf name {
+        type yang:yang-identifier;
+      }
+      uses json:json-schema;
+    }
+
+    list oneOf {
+      key name;
+      leaf name {
+        type yang:yang-identifier;
+      }
+      uses json:json-schema;
+    }
+  }
+}

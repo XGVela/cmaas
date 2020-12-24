@@ -1,0 +1,33 @@
+{{- $cnfHdr := (dict "" "") -}}
+{{- include "cnfTplHeader_2_9" (dict "cnfHdr" $cnfHdr "dot" . ) -}}
+apiVersion: v1
+kind: Service
+{{- include "cnfTplMetadata_2_9" (dict "setOffset" "0" "cnfHdr" $cnfHdr "metadata" .Values.componentSpec.service.metaspec) }}
+spec:
+ selector:
+   app: config-service
+ ports:
+ - name: netconf
+   port: 12090
+   targetPort: 2022
+   nodePort: 32767
+ - name: cli
+   port: 10090
+   targetPort: 2024
+   nodePort: 30164
+ - name: ssh
+   port: 13090
+   targetPort: 22
+ - name: ipc
+   port: 15090
+   targetPort: 4565
+ - name: restconf
+   port: 8008
+   targetPort: 8008
+ - name: http-app
+   port: 9091
+   targetPort: 9091
+ - name: webhook
+   port: 443
+   targetPort: 8443
+ type: NodePort

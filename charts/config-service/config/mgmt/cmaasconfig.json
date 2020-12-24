@@ -1,0 +1,6 @@
+{
+	"config": {
+		"changeSetLease": 180,
+		"logLevel": "DEBUG"
+	}
+}

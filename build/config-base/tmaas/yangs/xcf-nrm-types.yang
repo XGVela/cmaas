@@ -1,0 +1,218 @@
+module xcf-nrm-types {
+  yang-version 1.1;
+  namespace urn:rdns:org:xgvela:xcf-nrm-types;
+  prefix "typesXgvela";
+
+  import ietf-inet-types { prefix inet; }
+  import ietf-yang-types { prefix yang; }
+
+  organization "xGVela";
+  description "The model defines a YANG mapping of the top level
+    information classes used for management of xGVela Telco PaaS.";
+
+  revision 2020-03-21 {
+    description "Initial version.";
+  }
+
+  grouping ManagedNFProfile {
+    description "Defines profile for managed NF";
+    reference "3GPP TS 23.501";
+
+    leaf idx { type uint32 ; }
+
+    leaf nfInstanceID {
+      config false;
+      mandatory true;
+      type yang:uuid ;
+      description "This parameter defines profile for managed NF.
+        The format of the NF Instance ID shall be a
+        Universally Unique Identifier (UUID) version 4,
+        as described in IETF RFC 4122 " ;
+    }
+
+    leaf-list nfType {
+      config false;
+      min-elements 1;
+      type NfType;
+      description "Type of the Network Function" ;
+    }
+
+    leaf hostAddr {
+      mandatory true;
+      type inet:host ;
+      description "Host address of a NF";
+    }
+
+    leaf authzInfo {
+      type string ;
+      description "This parameter defines NF Specific Service authorization
+        information. It shall include the NF type (s) and NF realms/origins
+        allowed to consume NF Service(s) of NF Service Producer.";
+      reference "See TS 23.501" ;
+    }
+
+    leaf location {
+      type string ;
+      description "Information about the location of the NF instance
+        (e.g. geographic location, data center) defined by operator";
+      reference "TS 29.510" ;
+    }
+
+    leaf capacity {
+      mandatory true;
+      type uint16 ;
+      description "This parameter defines static capacity information
+        in the range of 0-65535, expressed as a weight relative to other
+        NF instances of the same type; if capacity is also present in the
+        nfServiceList parameters, those will have precedence over this value.";
+      reference "TS 29.510" ;
+    }
+
+    leaf nFSrvGroupId {
+      mandatory false;
+      type string ;
+      description "This parameter defines identity of the group that is
+        served by the NF instance.
+        May be config false or true depending on the ManagedFunction.
+        Config=true for Udrinfo. Config=false for UdmInfo and AusfInfo.";
+      reference "TS 29.510" ;
+    }
+
+    leaf priority {
+      mandatory false;
+      type uint16;
+      description "This parameter defines Priority (relative to other NFs
+        of the same type) in the range of 0-65535, to be used for NF selection;
+        lower values indicate a higher priority. If priority is also present
+        in the nfServiceList parameters, those will have precedence over
+        this value ";
+      reference "TS 29.510" ;
+    }
+  }
+
+  typedef NfType {
+    type string;
+  }
+
+  typedef NFVState {
+    reference "ETSI GS NFV-SWA001v010101P - Virtuanl Network Function Architecture";
+    type enumeration {
+      enum NULL {
+        value 0;
+        description "The instance does not exist and is about to be created.";
+      }
+
+      enum INSTANTIATED_NOT_CONFIGURED {
+        value 1;
+        description "The instance does exist but is not configured for service.";
+      }
+
+      enum INSTANTIATED_CONFIGURED_INACTIVE {
+        value 2;
+        description "The instance is configured for service.";
+      }
+
+      enum INSTANTIATED_CONFIGURED_ACTIVE {
+        value 3;
+        description "The instance that participates in service.";
+      }
+
+      enum TERMINATED {
+        value 4;
+        description "The instance has ceased to exist.";
+      }
+    }
+  }
+
+  typedef NFServiceInstanceState {
+    type enumeration {
+      enum NOT_READY {
+        value 0;
+        description "The instance is not ready for service.";
+      }
+
+      enum READY {
+        value 1;
+        description "The instance that participates in service.";
+      }
+    }
+  }
+
+  typedef HARole {
+    type enumeration {
+      enum UNASSIGNED {
+        value 0;
+        description "Role is not assigned.";
+      }
+
+      enum ACTIVE {
+        value 1;
+        description "Active role.";
+      }
+
+      enum STANDBY {
+        value 2;
+        description "Standby role.";
+      }
+    }
+  }
+
+  grouping Networks {
+    description "Identifies the interfaces and their parameters.";
+
+    list networkList {
+      key name;
+      config false;
+
+      description
+        "The list of networks on the device.";
+
+      leaf name {
+        type string;
+        description
+          "Name of the network";
+      }
+
+      leaf interface {
+        type string;
+        description
+          "Name of the interface";
+      }
+
+      leaf description {
+        type string;
+        description
+          "A textual description of the network.";
+      }
+
+      leaf default {
+        type boolean;
+        default false;
+        description "Whether this network is k8s default network or not.";
+      }
+
+      leaf-list ips {
+        type string;
+      }
+
+      leaf-list vips {
+        type string;
+      }
+
+      leaf phys-address {
+        type yang:phys-address;
+        config false;
+        description
+          "The interface's address at its protocol sub-layer.  For
+            example, for an 802.x interface, this object normally
+            contains a Media Access Control (MAC) address.  The
+            interface's media-specific modules must define the bit
+            and byte ordering and the format of the value of this
+            object.  For interfaces that do not have such an address
+            (e.g., a serial line), this node is not present.";
+        reference
+          "RFC 2863: The Interfaces Group MIB - ifPhysAddress";
+      }
+    }
+  }
+}

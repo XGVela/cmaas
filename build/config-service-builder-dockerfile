@@ -1,0 +1,18 @@
+#our base build image
+FROM maven:3.5-jdk-11
+
+# copy the project files
+COPY ./pom.xml ./pom.xml
+
+# copy libs
+ADD ./lib/conf-api-7.1.jar ./lib/com/tailf/conf-api/7.1/
+
+# build all dependencies
+RUN mvn dependency:go-offline -B
+
+# copy other files
+COPY ./src ./src
+
+# build for release
+RUN mvn install
+

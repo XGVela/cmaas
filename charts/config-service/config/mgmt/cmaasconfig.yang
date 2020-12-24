@@ -1,0 +1,37 @@
+module xcf-cmaas-config {
+    namespace "urn:rdns:org:xgvela:cmaas";
+
+	prefix xgvela-cmaas;
+
+	import ietf-inet-types { prefix inet; }
+
+	import tailf-common { prefix tailf; }
+
+	revision "2019-02-03" {
+	    description "Initial revision";
+	}
+	container config {
+		tailf:callpoint configUpdate {
+			    tailf:transaction-hook subtree;
+			}
+	    leaf changeSetLease {
+					type int64 {
+                                                range 10..600;
+                                               }
+					mandatory true;
+				}
+		leaf logLevel {
+					type enumeration {
+                                                 enum TRACE;
+                                                 enum FATAL;
+                                                 enum ERROR;
+                                                 enum WARN;
+                                                 enum INFO;
+                                                 enum DEBUG;
+                                                 enum ALL;
+                                             }
+					mandatory true;
+				}
+
+	}
+}

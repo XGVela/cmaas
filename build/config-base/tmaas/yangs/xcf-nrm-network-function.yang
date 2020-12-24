@@ -1,0 +1,163 @@
+module xcf-nrm-network-function {
+  yang-version 1.1;
+  namespace urn:rdns:org:xgvela:xcf-nrm-network-function;
+  prefix nfXgvela;
+
+  import ietf-yang-types  { prefix yang; }
+  import _3gpp-common-top { prefix top3gpp; }
+  import tailf-common { prefix tailf; }
+  import xcf-nrm-types { prefix typesXgvela; }
+  import xcf-nrm-managed-element { prefix meXgvela; }
+  import xcf-nrm-managed-function { prefix mfXgvela; }
+  import xcf-nrm-operations { prefix opXgvela; }
+
+  description "Network Function derived from basic ManagedFunction.";
+
+  revision 2020-09-29 {
+      description "Added operations node.";
+  }
+
+  revision 2020-03-21 {
+      description "Initial revision";
+  }
+
+  grouping NetworkFunctionGrp {
+    uses mfXgvela:ManagedFunctionGrp;
+  }
+
+  grouping NFServiceInstanceGrp {
+    description "A NFServiceInstance represents a Network Function (NF) service instance.";
+    reference "Clause 7 of 3GPP TS 23.501.";
+
+    leaf name {
+      //config false;
+      mandatory true;
+      type string {
+        pattern '[a-z]([a-z0-9\-]+)';
+      }
+      description "Name of the NFServiceInstance.";
+    }
+
+    leaf userLabel {
+        type string;
+        description "A user-friendly (and user assignable) name of this object.";
+    }
+
+    leaf state  {
+      type typesXgvela:NFServiceInstanceState;
+      mandatory true;
+      config false;
+      description "State of a Network Function Service Instance.";
+    }
+
+    leaf haRole {
+      type typesXgvela:HARole;
+      when "../../../attributes/ha/mode = 'HOT_STANDBY' or ../../../attributes/ha/mode = 'COLD_STANDBY' or ../../../attributes/ha/mode = 'ALL_ACTIVE'";
+      config false;
+      description "Indicates HA role assigned to the NFServiceInstance When the service is running in redundant HA mode.";
+    }
+
+    leaf msuid {
+      type string;
+      config false;
+      description "Indicates microservice UID assigned to the NFServiceInstance.";
+    }
+
+    uses typesXgvela:Networks;
+  }
+
+  grouping NetworkFunctionContainedClasses {
+    uses opXgvela:OperationsGrp;
+    list NFService {
+      description "Represents a Network Function Service.";
+      reference "MVNR MWP MCF 1.0";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses mfXgvela:ManagedNFServiceGrp;
+      }
+      list extendedAttributes {
+        key "name";
+        leaf name {
+          type yang:yang-identifier {
+            length 1..256;
+          }
+        }
+        leaf value {
+          type string {
+            length 0..1024;
+          }
+        }
+      }
+      uses opXgvela:OperationsGrp;
+      list NFServiceInstance {
+        description "Represents a Network Function Service Instance";
+        reference "MVNR MWP MCF 1.0";
+        key id;
+        uses top3gpp:Top_Grp;
+        container attributes {
+          uses NFServiceInstanceGrp;
+        }
+        list extendedAttributes {
+          key "name";
+          leaf name {
+            type yang:yang-identifier {
+              length 1..256;
+            }
+          }
+          leaf value {
+            type string {
+              length 0..1024;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  augment /meXgvela:ManagedElement {
+    list NetworkFunction {
+      description "Represents a Network Function";
+      reference "MVNR MWP MCF 1.0";
+      key id;
+      uses top3gpp:Top_Grp;
+      container attributes {
+        uses nfXgvela:NetworkFunctionGrp;
+      }
+      list extendedAttributes {
+        key "name";
+        leaf name {
+          type yang:yang-identifier {
+            length 1..256;
+          }
+        }
+        leaf value {
+          type string {
+            length 0..1024;
+          }
+        }
+      }
+      uses nfXgvela:NetworkFunctionContainedClasses;
+    }
+  }
+
+  augment /meXgvela:ManagedElement/nfXgvela:NetworkFunction/nfXgvela:operations {
+    container record {
+      //Making record/get action available for all NF and NFS. when "../../attributes/nfType = 'XGVELA'";
+      tailf:action get {
+        tailf:actionpoint nf-operations-record-get;
+        input {
+          leaf transactionId {
+            type yang:uuid;
+            mandatory true;
+          }
+        }
+        output {
+          container operations-record {
+            uses opXgvela:operations-record-grp;
+          }
+        }
+      }
+    }
+  }
+}

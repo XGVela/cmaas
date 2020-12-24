@@ -1,0 +1,21 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: XGVELA_ID-upgrade-webhook
+webhooks:
+  - name: config-service.default.svc
+    objectSelector:
+      matchLabels:
+        xgvelaId: "XGVELA_ID"
+    clientConfig:
+      service:
+        name: SERVICE_NAME
+        namespace: K8S_NAMESPACE
+        path: "/mutate"
+      caBundle: CA_BUNDLE
+    rules:
+      - operations: [ "UPDATE" ]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["configmaps"]
+    failurePolicy: Ignore

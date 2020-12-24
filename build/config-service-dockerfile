@@ -1,0 +1,23 @@
+# our base build image
+FROM config-service-builder:v0.1 as builder
+
+ARG BUILDER_LABEL
+
+RUN echo "Tagging Label IMAGE-TYPE=$BUILDER_LABEL"
+LABEL IMAGE-TYPE="$BUILDER_LABEL"
+
+# our final base image
+FROM config-base:v3.2
+
+# create bin directory
+RUN mkdir -p /opt/config-service
+
+# copy over the built artifact from the maven image
+COPY --from=builder target/ConfigService-v1.0.jar /opt/config-service
+COPY --from=builder target/conf /opt/config-service/conf
+
+# add container start script
+ADD ./scripts/start.sh /bin/start.sh
+
+# set the startup command to run container
+ENTRYPOINT ["/bin/start.sh"]
