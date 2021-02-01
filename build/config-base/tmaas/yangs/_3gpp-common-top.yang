@@ -1,26 +1,41 @@
 module _3gpp-common-top {
   yang-version 1.1;
-  
+
   namespace urn:3gpp:sa5:_3gpp-common-top;
   prefix top3gpp;
-  
+
   organization "3gpp SA5";
-  description "The model defines a YANG mapping of the top level 
-    information classes used for management of 5G networks and 
-    network slicing.";
-  reference 
-    "3GPP TS 28.622 
+  description "The model defines a YANG mapping of the top level
+    information classes used for management of 5G networks and
+    network slicing.
+
+    Copyright (c) 2019 3GPP. All rights reserved.
+    Copyright 2021 Mavenir
+
+    Licensed under the Apache License, Version 2.0 (the \"License\");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an \"AS IS\" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.";
+  reference
+    "3GPP TS 28.622
     Generic Network Resource Model (NRM)
     Integration Reference Point (IRP);
     Information Service (IS)
-    
-    3GPP TS 28.620 
+
+    3GPP TS 28.620
     Umbrella Information Model (UIM)";
 
   revision 2019-06-17 {
     description "Initial revision";
   }
-  
+
   grouping Top_Grp {
     description "Abstract class supplying a naming attribute";
     reference "3GPP TS 28.620";
@@ -28,9 +43,9 @@ module _3gpp-common-top {
     leaf id {
       type string;
       description "Key leaf (namingAttribute) for a class/list.
-        Should be used as a key leaf for lists representing 
+        Should be used as a key leaf for lists representing
         stage 2 classes.";
-      reference "3GPP TS 32.300 Name convention for managed objects";    
-    }    
-  }  
+      reference "3GPP TS 32.300 Name convention for managed objects";
+    }
+  }
 }
