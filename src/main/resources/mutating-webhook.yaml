@@ -17,7 +17,7 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: XGVELA_ID-upgrade-webhook
 webhooks:
-  - name: config-service.default.svc
+  - name: cmaas.default.svc
     objectSelector:
       matchLabels:
         xgvelaId: "XGVELA_ID"

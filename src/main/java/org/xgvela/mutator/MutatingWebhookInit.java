@@ -38,9 +38,9 @@ public class MutatingWebhookInit {
 
 	@Async
 	public void init() {
-		final String webhookPath = "/opt/config-service/conf/mutating-webhook.yaml";
+		final String webhookPath = "/opt/cmaas/conf/mutating-webhook.yaml";
 		final String replace_xgvelaId = "sed -i \"s|XGVELA_ID|" + ConfigMapWatchProcessor.selfXGVelaId
-				+ "|g\" /opt/config-service/conf/mutating-webhook.yaml";
+				+ "|g\" /opt/cmaas/conf/mutating-webhook.yaml";
 
 		LOG.info("Replacing xgvelaId: " + replace_xgvelaId);
 		Utils.exec(replace_xgvelaId);
