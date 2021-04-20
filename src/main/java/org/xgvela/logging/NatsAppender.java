@@ -38,7 +38,7 @@ import io.nats.client.Connection;
 public class NatsAppender extends AbstractAppender {
 
 	public static String K8sContainer = String.valueOf(System.getenv("K8S_CONTAINER_ID"));
-	public static String ConfigService = String.valueOf("config-service");
+	public static String ConfigService = String.valueOf("cmaas");
 
 	private NatsAppender(String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions) {
 		super(name, filter, layout, ignoreExceptions);

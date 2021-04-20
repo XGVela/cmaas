@@ -56,7 +56,7 @@ public class InitializationBean {
 
 		registrationLatch.await();
 
-		LOG.info("Initializing config-service...");
+		LOG.info("Initializing cmaas...");
 
 		// sync
 		etcdUtil.initClient();
@@ -81,6 +81,6 @@ public class InitializationBean {
 		LOG.info("Starting ConfigMap watcher");
 		watcher.init();
 
-		LOG.info("Successfully initialized config-service");
+		LOG.info("Successfully initialized cmaas");
 	}
 }

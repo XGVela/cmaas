@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # our base build image
-FROM config-service-builder:v0.1 as builder
+FROM cmaas-builder:v0.1 as builder
 
 ARG BUILDER_LABEL
 
@@ -24,11 +24,11 @@ LABEL IMAGE-TYPE="$BUILDER_LABEL"
 FROM config-base:v3.2
 
 # create bin directory
-RUN mkdir -p /opt/config-service
+RUN mkdir -p /opt/cmaas
 
 # copy over the built artifact from the maven image
-COPY --from=builder target/ConfigService-v1.0.jar /opt/config-service
-COPY --from=builder target/conf /opt/config-service/conf
+COPY --from=builder target/ConfigService-v1.0.jar /opt/cmaas
+COPY --from=builder target/conf /opt/cmaas/conf
 
 # add container start script
 ADD ./scripts/start.sh /bin/start.sh

@@ -23,29 +23,29 @@ else
 fi
 
 mkdir -p /netconf/apps/config/model
-mkdir -p /netconf/apps/logs 
+mkdir -p /netconf/apps/logs
 
 echo "CID $K8S_CONTAINER_ID"
 echo "======== Starting NETCONF ========"
 /netconf/bin/netconf
 
-cd /opt/config-service/conf
+cd /opt/cmaas/conf
 
 echo "======== Generating server.key ========"
 openssl genrsa -out server.key 2048
 
 echo "======== Generating server.csr ========"
 if [[ -z "${APP_NAME}" ]]; then
-  openssl req -new -key server.key -out server.csr -subj "/CN=config-service.$K8S_NAMESPACE.svc" -config <(cat /etc/ssl/openssl.cnf | sed "s/RANDFILE\s*=\s*\$ENV::HOME\/\.rnd/#/")
-  sed -i "s|SERVICE_NAME|config-service|g" /opt/config-service/conf/mutating-webhook.yaml
+  openssl req -new -key server.key -out server.csr -subj "/CN=cmaas.$K8S_NAMESPACE.svc" -config <(cat /etc/ssl/openssl.cnf | sed "s/RANDFILE\s*=\s*\$ENV::HOME\/\.rnd/#/")
+  sed -i "s|SERVICE_NAME|cmaas|g" /opt/cmaas/conf/mutating-webhook.yaml
 else
   echo "======== RCP platform ========"
-  openssl req -new -key server.key -out server.csr -subj "/CN=$APP_NAME-config-service-np-0.$K8S_NAMESPACE.svc" -config <(cat /etc/ssl/openssl.cnf | sed "s/RANDFILE\s*=\s*\$ENV::HOME\/\.rnd/#/")
-  sed -i "s|SERVICE_NAME|$APP_NAME-config-service-np-0|g" /opt/config-service/conf/mutating-webhook.yaml
+  openssl req -new -key server.key -out server.csr -subj "/CN=$APP_NAME-cmaas-np-0.$K8S_NAMESPACE.svc" -config <(cat /etc/ssl/openssl.cnf | sed "s/RANDFILE\s*=\s*\$ENV::HOME\/\.rnd/#/")
+  sed -i "s|SERVICE_NAME|$APP_NAME-cmaas-np-0|g" /opt/cmaas/conf/mutating-webhook.yaml
 fi
 
 echo "======== Generating server.crt ========"
-openssl x509 -req -days 3650 -in server.csr -signkey server.key -out server.crt 
+openssl x509 -req -days 3650 -in server.csr -signkey server.key -out server.crt
 
 echo "======== Generating keystore.p12 ========"
 openssl pkcs12 -export -in server.crt -inkey server.key -out keystore.p12 -name cmaas -password pass:cmaas
@@ -54,17 +54,17 @@ pwd
 ls -lart
 
 echo "======== Replacing namespace in webhook file ========"
-sed -i "s/K8S_NAMESPACE/$K8S_NAMESPACE/g" /opt/config-service/conf/mutating-webhook.yaml
+sed -i "s/K8S_NAMESPACE/$K8S_NAMESPACE/g" /opt/cmaas/conf/mutating-webhook.yaml
 
 echo "======== Replacing caBundle in webhook file ========"
 export CA_BUNDLE=$(cat server.crt | base64 | tr -d '\n')
-sed -i "s|CA_BUNDLE|$CA_BUNDLE|g" /opt/config-service/conf/mutating-webhook.yaml
+sed -i "s|CA_BUNDLE|$CA_BUNDLE|g" /opt/cmaas/conf/mutating-webhook.yaml
 
 echo "=================================================================================="
-cat /opt/config-service/conf/mutating-webhook.yaml
+cat /opt/cmaas/conf/mutating-webhook.yaml
 
 echo "======== Starting ConfigService ========"
 echo "$JAVA_OPTIONS"
-java -XX:+PrintFlagsFinal $JAVA_OPTIONS -jar /opt/config-service/ConfigService-v1.0.jar
+java -XX:+PrintFlagsFinal $JAVA_OPTIONS -jar /opt/cmaas/ConfigService-v1.0.jar
 
 echo "======== Exiting container ======="
