@@ -83,6 +83,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.tailf</groupId>
+			<artifactId>conf-api</artifactId>
+			<version>7.1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.onosproject</groupId>
 			<artifactId>jnc</artifactId>
 			<version>1.0</version>

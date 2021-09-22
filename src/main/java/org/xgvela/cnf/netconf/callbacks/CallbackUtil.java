@@ -35,10 +35,10 @@ public class CallbackUtil {
 
 	private static String TopoFqdn = null;
 
-	// singleton method for topo-engine fqdn
+	// singleton method for tmaas fqdn
 	public String getTopoFqdn() {
 		if (TopoFqdn == null) {
-			TopoFqdn = "http://" + k8sUtil.getServiceName("topo-engine") + "." + System.getenv("K8S_NAMESPACE")
+			TopoFqdn = "http://" + k8sUtil.getServiceName("tmaas") + "." + System.getenv("K8S_NAMESPACE")
 					+ ".svc.cluster.local:8080";
 			LOG.debug("Topo-Engine FQDN = " + TopoFqdn);
 		}

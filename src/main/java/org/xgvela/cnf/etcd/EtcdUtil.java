@@ -84,6 +84,7 @@ public class EtcdUtil {
 			LOG.error(e.getMessage(), e);
 		}
 		LOG.info("Etcd entry found: stateActive/" + nfId);
+		SubscriptionManager.readyNfs.add(nfId);
 		return true;
 	}
 
