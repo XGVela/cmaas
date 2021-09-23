@@ -21,13 +21,13 @@ RUN echo "Tagging Label IMAGE-TYPE=$BUILDER_LABEL"
 LABEL IMAGE-TYPE="$BUILDER_LABEL"
 
 # our final base image
-FROM config-base:v3.2
+FROM cmaas-base:v3.2
 
 # create bin directory
 RUN mkdir -p /opt/cmaas
 
 # copy over the built artifact from the maven image
-COPY --from=builder target/ConfigService-v1.0.jar /opt/cmaas
+COPY --from=builder target/cmaas-v1.0.jar /opt/cmaas
 COPY --from=builder target/conf /opt/cmaas/conf
 
 # add container start script

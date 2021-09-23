@@ -20,13 +20,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.xgvela.cem</groupId>
-	<artifactId>ConfigService</artifactId>
+	<groupId>org.xgvela.cmaas</groupId>
+	<artifactId>cmaas</artifactId>
 	<version>v1.0</version>
 	<packaging>jar</packaging>
 
-	<name>ConfigService</name>
-	<description>CEM Config Service</description>
+	<name>CMaaS</name>
+	<description>Configuration Management as a Service</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

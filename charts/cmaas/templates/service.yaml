@@ -19,7 +19,7 @@ kind: Service
 {{- include "cnfTplMetadata_2_9" (dict "setOffset" "0" "cnfHdr" $cnfHdr "metadata" .Values.componentSpec.service.metaspec) }}
 spec:
  selector:
-   app: config-service
+   app: cmaas
  ports:
  - name: netconf
    port: 12090

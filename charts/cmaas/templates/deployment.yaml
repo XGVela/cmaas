@@ -45,7 +45,7 @@ spec:
            value: {{ .Values.global.xgvela.kafka_svc_fqdn | default .Values.kafka_svc_fqdn | quote }}
         command: [ "/bin/bash", "-c", "svc-discovery.sh \"EVENT\" " ]
       containers:
-      - name: config-service
+      - name: cmaas
         {{- if and (.Values.global) (.Values.global.hub) }}
         image: {{ .Values.global.hub }}/{{ .Values.config_service.container.image.repository }}:{{ .Values.config_service.container.image.tag }}
         {{- else }}
@@ -96,7 +96,7 @@ spec:
         - mountPath: {{ .Values.config_service.container.mount.container_path }}
           name: mnt-conf
         - mountPath: /cmaasconfig
-          name: config-service-mgmt-cfg
+          name: cmaas-mgmt-cfg
       - name: cim
         {{- if and (.Values.global) (.Values.global.hub) }}
         image: {{ .Values.global.hub }}/{{ .Values.oam_sidecar.container.image.repository }}:{{ .Values.oam_sidecar.container.image.tag }}
@@ -171,7 +171,7 @@ spec:
             - key: cmaasconfig.json
               path: cmaasconfig.json     
           name: {{ $cnfHdr.nfVariables.svcname }}-mgmt-cfg
-        name: config-service-mgmt-cfg
+        name: cmaas-mgmt-cfg
       - configMap:
           items:
             - key: cim.json

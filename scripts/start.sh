@@ -37,11 +37,11 @@ openssl genrsa -out server.key 2048
 echo "======== Generating server.csr ========"
 if [[ -z "${APP_NAME}" ]]; then
   openssl req -new -key server.key -out server.csr -subj "/CN=cmaas.$K8S_NAMESPACE.svc" -config <(cat /etc/ssl/openssl.cnf | sed "s/RANDFILE\s*=\s*\$ENV::HOME\/\.rnd/#/")
-  sed -i "s|SERVICE_NAME|cmaas|g" /opt/cmaas/conf/mutating-webhook.yaml
+  sed -i -e "s|SERVICE_NAME|cmaas|g" /opt/cmaas/conf/mutating-webhook.yaml
 else
   echo "======== RCP platform ========"
   openssl req -new -key server.key -out server.csr -subj "/CN=$APP_NAME-cmaas-np-0.$K8S_NAMESPACE.svc" -config <(cat /etc/ssl/openssl.cnf | sed "s/RANDFILE\s*=\s*\$ENV::HOME\/\.rnd/#/")
-  sed -i "s|SERVICE_NAME|$APP_NAME-cmaas-np-0|g" /opt/cmaas/conf/mutating-webhook.yaml
+  sed -i -e "s|SERVICE_NAME|$APP_NAME-cmaas-np-0|g" /opt/cmaas/conf/mutating-webhook.yaml
 fi
 
 echo "======== Generating server.crt ========"
@@ -54,17 +54,17 @@ pwd
 ls -lart
 
 echo "======== Replacing namespace in webhook file ========"
-sed -i "s/K8S_NAMESPACE/$K8S_NAMESPACE/g" /opt/cmaas/conf/mutating-webhook.yaml
+sed -i -e "s/K8S_NAMESPACE/$K8S_NAMESPACE/g" /opt/cmaas/conf/mutating-webhook.yaml
 
 echo "======== Replacing caBundle in webhook file ========"
 export CA_BUNDLE=$(cat server.crt | base64 | tr -d '\n')
-sed -i "s|CA_BUNDLE|$CA_BUNDLE|g" /opt/cmaas/conf/mutating-webhook.yaml
+sed -i -e "s|CA_BUNDLE|$CA_BUNDLE|g" /opt/cmaas/conf/mutating-webhook.yaml
 
 echo "=================================================================================="
 cat /opt/cmaas/conf/mutating-webhook.yaml
 
-echo "======== Starting ConfigService ========"
+echo "======== Starting CMaaS ========"
 echo "$JAVA_OPTIONS"
-java -XX:+PrintFlagsFinal $JAVA_OPTIONS -jar /opt/cmaas/ConfigService-v1.0.jar
+java -XX:+PrintFlagsFinal $JAVA_OPTIONS -jar /opt/cmaas/cmaas-v1.0.jar
 
 echo "======== Exiting container ======="

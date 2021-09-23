@@ -56,13 +56,13 @@ nf:
 namespace: xgvela-xgvela1-mgmt-xgvela-xgvela1
 
 common:
-  app_name: config-service
+  app_name: cmaas
 
 componentSpec:
   deployment:
     pod_metaspec:
       labels:
-        app: config-service
+        app: cmaas
       annotations:
         sidecar.istio.io/inject: "false"
         prometheus.io/scrape: "true"
@@ -71,9 +71,9 @@ componentSpec:
   service:
     metaspec:
       labels:
-        app: config-service
+        app: cmaas
 
-serviceAccount: config-serviceaccount
+serviceAccount: cmaas-serviceaccount
 replica_count: 1
 hub: 10.1.1.1:5000
 changeset_lease: 120
@@ -83,9 +83,9 @@ config_service:
       repository: xgvela-svc-init
       tag: v0.3.4
   container:
-    hostname: config-service
+    hostname: cmaas
     image:
-      repository: config-service
+      repository: cmaas
       tag: cmaas_tag #replaced by build script
     resource:
       limit_memory: 1000Mi

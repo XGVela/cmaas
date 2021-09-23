@@ -45,7 +45,7 @@ mkdir -p $ARTIFACTS_PATH/images
 
 echo -e "\e[1;32;40m[CMAAS-BUILD] Build: CMaaS base image \e[0m"
 ## TODO: Release below ConfD container build with Netopeer2
-#docker build -t config-base:v3.2 ./build/config-base/.
+docker build -t cmaas-base:v3.2 ./build/cmaas-base/.
 
 if [[ -n "$CLEAN_BUILD_BUILDER_IMAGE" ]] && [[ "$CLEAN_BUILD_BUILDER_IMAGE" == "yes" ]]; then
 echo -e "\e[1;32;40m[CMAAS-BUILD] Clean Build Builder Image...\e[0m"
@@ -65,8 +65,8 @@ docker save $MICROSERVICE_NAME:$MICROSERVICE_VERSION | gzip > $ARTIFACTS_PATH/im
 
 echo -e "\e[1;32;40m[CMAAS-BUILD] Upating cmaas chart \e[0m"
 cp -r ./charts/cmaas $ARTIFACTS_PATH/charts/.
-sed -i "s/cmaas_tag/$1/" $ARTIFACTS_PATH/charts/cmaas/values.yaml
-#sed -i "s/cim_tag/$4/" $ARTIFACTS_PATH/charts/cmaas/values.yaml
+sed -i -e "s/cmaas_tag/$1/" $ARTIFACTS_PATH/charts/cmaas/values.yaml
+#sed -i -e "s/cim_tag/$4/" $ARTIFACTS_PATH/charts/cmaas/values.yaml
 md5sum $ARTIFACTS_PATH/images/*
 
 echo -e "\e[1;32;40m[CMAAS-BUILD] Deleting intermediate and microservice images \e[0m"
