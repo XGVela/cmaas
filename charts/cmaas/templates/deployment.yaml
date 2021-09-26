@@ -1,16 +1,3 @@
-# Copyright 2021 Mavenir
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 {{- $cnfHdr := (dict "" "") -}} 
 {{- include "cnfTplHeader_2_9" (dict "cnfHdr" $cnfHdr "dot" . ) -}}
@@ -33,11 +20,11 @@ spec:
       initContainers:
       - name: svc-discovery
         {{- if and (.Values.global) (.Values.global.hub) }}
-        image: {{ .Values.global.hub }}/{{ .Values.config_service.init_container.image.repository }}:{{ .Values.config_service.init_container.image.tag }}
+        image: {{ .Values.global.hub }}/{{ .Values.cmaas.init_container.image.repository }}:{{ .Values.cmaas.init_container.image.tag }}
         {{- else }}
-        image: {{ .Values.hub }}/{{ .Values.config_service.init_container.image.repository }}:{{ .Values.config_service.init_container.image.tag }}
+        image: {{ .Values.hub }}/{{ .Values.cmaas.init_container.image.repository }}:{{ .Values.cmaas.init_container.image.tag }}
         {{- end }}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         env:
          - name: ETCD_SVC_FQDN
            value: {{ .Values.global.xgvela.etcd_svc_fqdn | default .Values.etcd_svc_fqdn | quote }}
@@ -47,11 +34,11 @@ spec:
       containers:
       - name: cmaas
         {{- if and (.Values.global) (.Values.global.hub) }}
-        image: {{ .Values.global.hub }}/{{ .Values.config_service.container.image.repository }}:{{ .Values.config_service.container.image.tag }}
+        image: {{ .Values.global.hub }}/{{ .Values.cmaas.container.image.repository }}:{{ .Values.cmaas.container.image.tag }}
         {{- else }}
-        image: {{ .Values.hub }}/{{ .Values.config_service.container.image.repository }}:{{ .Values.config_service.container.image.tag }}
+        image: {{ .Values.hub }}/{{ .Values.cmaas.container.image.repository }}:{{ .Values.cmaas.container.image.tag }}
         {{- end }}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
           - containerPort: 9091
           - containerPort: 8000
@@ -87,13 +74,13 @@ spec:
         command: ["/bin/bash","-c","/bin/start.sh"]
         resources:
           limits:
-            cpu: {{ .Values.config_service.container.resource.limit_cpu }}
-            memory: {{ .Values.config_service.container.resource.limit_memory }}
+            cpu: {{ .Values.cmaas.container.resource.limit_cpu }}
+            memory: {{ .Values.cmaas.container.resource.limit_memory }}
           requests:
-            cpu: {{ .Values.config_service.container.resource.request_cpu }}
-            memory: {{ .Values.config_service.container.resource.request_memory }}
+            cpu: {{ .Values.cmaas.container.resource.request_cpu }}
+            memory: {{ .Values.cmaas.container.resource.request_memory }}
         volumeMounts:
-        - mountPath: {{ .Values.config_service.container.mount.container_path }}
+        - mountPath: {{ .Values.cmaas.container.mount.container_path }}
           name: mnt-conf
         - mountPath: /cmaasconfig
           name: cmaas-mgmt-cfg
@@ -103,7 +90,7 @@ spec:
         {{- else }}
         image: {{ .Values.hub }}/{{ .Values.oam_sidecar.container.image.repository }}:{{ .Values.oam_sidecar.container.image.tag }}
         {{- end }}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
           - containerPort: 6060
         readinessProbe:
@@ -160,8 +147,8 @@ spec:
       volumes:
       - name: mnt-conf
         hostPath:
-          path: {{ .Values.config_service.container.mount.host_path }}
-          type: {{ .Values.config_service.container.mount.type }}
+          path: {{ .Values.cmaas.container.mount.host_path }}
+          type: {{ .Values.cmaas.container.mount.type }}
       - name: mnt-oam-sidecar
         hostPath:
           path: {{ .Values.oam_sidecar.container.mount.host_path }}
