@@ -22,12 +22,12 @@ else
   export K8S_CONTAINER_ID=`cat /proc/self/cgroup | head -1 | cut -d '/' -f 4`
 fi
 
-mkdir -p /netconf/apps/config/model
-mkdir -p /netconf/apps/logs
+mkdir -p /confd/apps/config/model
+mkdir -p /confd/apps/logs
 
 echo "CID $K8S_CONTAINER_ID"
-echo "======== Starting NETCONF ========"
-/netconf/bin/netconf
+echo "======== Starting ConfD ========"
+/confd/bin/confd
 
 cd /opt/cmaas/conf
 
