@@ -1,12 +1,13 @@
 # Dockerfile for running ConfD examples
 #
-# We use the standard ubuntu base image.
-FROM adoptopenjdk/openjdk11:jdk-11.0.8_10
-LABEL description=”ConfdContainer.”
-LABEL maintainer=”jojohans@cisco.com”
+FROM adoptopenjdk/openjdk11:alpine-jre
 # Install extra packages needed to run ConfD. We also need wget in order tobe
 # able to install dump-init.
-RUN apt-get update && apt-get install -y libssl-dev vim net-tools netcat-openbsd openssl
+#RUN apt-get update && apt-get install -y libssl1.0-dev vim net-tools netcat-openbsd openssl
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.4/main" > /etc/apk/repositories; \
+    apk update && apk upgrade && apk --no-cache add ca-certificates wget bash ncurses5-libs libcrypto1.0 openssl \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/main
 # Alternative package installation command which, in addition to libssl install
 # usefule network, debug and trace tools.
 #RUN apt-get update && apt-get install -y \
@@ -29,8 +30,12 @@ ENV PATH=/confd/bin:$PATH
 # described in section 28.3. Installing ConfD on a target system in theConfD
 # User Guide.
 COPY confd-target.tgz /tmp
-RUN mkdir -p ${CONFD_DIR}
-RUN tar xzf /tmp/confd-target.tgz -C /
+#RUN mkdir -p ${CONFD_DIR}
+#RUN tar xzf /tmp/confd-target.tgz -C /
+RUN mkdir -p ${CONFD_DIR}; \
+    tar xzf /tmp/confd-target.tgz -C /; \
+    mkdir -p /confd/apps /confd/apps/logs /opt/cmaas; \
+    chgrp -R 0 /confd /opt/cmaas && chmod -R g=u /confd /opt/cmaas
 # Add data model store for user defined models. We will mount the example
 # loadpath directory here, when we run the container from within a ConfD
 # example.
@@ -50,15 +55,10 @@ COPY tmaas/fxs/* /confd/etc/confd/
 # the ports for the protocol we use, e.g. NETCONF (over ssh) and the
 # IPC port. Of course, when we instantiate a container we only forward
 # the ports needed to run the example.
-EXPOSE 2022
-EXPOSE 2023
-EXPOSE 2024
-EXPOSE 4565
-EXPOSE 8008
-EXPOSE 8088
+EXPOSE 2022 2023 2024 4565 8008 8088
 
 
 # Cleanup
-RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+#RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Start init daemon and ConfD
 #ENTRYPOINT ["/bin/start.sh"]

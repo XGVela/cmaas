@@ -168,7 +168,7 @@ public class NetconfUtil {
 	}
 
 	public boolean compileYang(String yangFile, String fxsFile) {
-		String cmd = "/netconf/bin/netconfc -c " + yangFile + " -o " + fxsFile + " --yangpath /netconf/apps/config/model/";
+		String cmd = "/confd/bin/confdc -c " + yangFile + " -o " + fxsFile + " --yangpath /confd/apps/config/model/";
 		return Utils.exec(cmd);
 	}
 

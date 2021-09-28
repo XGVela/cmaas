@@ -182,13 +182,13 @@ public class Utils {
 			String oldModule = newModule.substring(0, newModule.lastIndexOf("-" + nfName));
 			LOG.info("Module/Sub-Module Transformation: [" + oldModule + ", " + newModule + "]");
 
-			String cmd_module = "find /netconf/apps/config/model -type f -name \\*yang | xargs sed -i 's/import "
+			String cmd_module = "find /confd/apps/config/model -type f -name \\*yang | xargs sed -i 's/import "
 					+ oldModule + " {/import " + newModule + " {/g'";
 
-			String cmd_submodule = "find /netconf/apps/config/model -type f -name \\*yang | xargs sed -i 's/belongs-to "
+			String cmd_submodule = "find /confd/apps/config/model -type f -name \\*yang | xargs sed -i 's/belongs-to "
 					+ oldModule + " {/belongs-to " + newModule + " {/g'";
 
-			String cmd_include = "find /netconf/apps/config/model -type f -name \\*yang | xargs sed -i 's/include "
+			String cmd_include = "find /confd/apps/config/model -type f -name \\*yang | xargs sed -i 's/include "
 					+ oldModule + ";/include " + newModule + ";/g'";
 
 			String[] cmd = { cmd_include, cmd_module, cmd_submodule };

@@ -36,8 +36,8 @@ public class Constants {
 	public static final String SVC_VERSION = "svcVersion";
 	public static final String NF_VERSION = "xgvela.com/tmaas.nf.nfVersion";
 
-	public static final String YANG_FILE_PATH = "/netconf/apps/config/model/";
-	public static final String FXS_FILE_PATH = "/netconf/etc/netconf/";
+	public static final String YANG_FILE_PATH = "/confd/apps/config/model/";
+	public static final String FXS_FILE_PATH = "/confd/etc/confd/";
 
 	public static final String YANG = ".yang";
 	public static final String JSON = ".json";

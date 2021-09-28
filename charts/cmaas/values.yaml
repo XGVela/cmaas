@@ -81,7 +81,7 @@ cmaas:
       request_cpu: 300m
     mount:
       type: Directory
-      container_path: /netconf/apps
+      container_path: /confd/apps
       host_path: /data
 
 oam_sidecar:
